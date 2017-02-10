@@ -305,15 +305,22 @@ if (SPAM_ON == true && VALUESPAM_ON == true) {
     iota.api.getInputs(USER_SEED, function(e,s) {
         if(s) {
             var inputs = s.inputs;
-            balance_found = true;
 
-            transfers = [{
+            if (inputs.length > 0) {
+                balance_found = true;
+
+                transfers = [{
                     'address': inputs[0].address,
                     'value': inputs[0].balance,
                     'message': SPAM_MESSAGE,
                     'tag': SPAM_TAG
-            }];
-            console.log('*INFO  Value spamming with address ' + inputs[0].address + ' and value '  + inputs[0].balance+'.');
+                }];
+                console.log('*INFO  Value spamming with address ' + inputs[0].address + ' and value '  + inputs[0].balance+'.');
+            } else {
+                console.log('*INFO  No value found in the seed.!')
+                process.exit(1);
+            }
+
             enable_spam = true;
 
         } else {
