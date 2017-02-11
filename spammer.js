@@ -305,7 +305,7 @@ else  {
     console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING MESSAGE SPAMMER: "+SPAM_ON);
 }
 
-if (SPAM_ON == true && VALUESPAM_ON == true) {
+if (iri_is_synced && SPAM_ON == true && VALUESPAM_ON == true) {
     console.log('*INFO  Checking the seed for any balance...');
     iota.api.getInputs(USER_SEED, function(e,s) {
         if(s) {
