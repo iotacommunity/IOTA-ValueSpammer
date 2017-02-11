@@ -7,10 +7,11 @@ var IOTA = require("iota.lib.js");
 // ---------------------------------------
 var REPEATER_ON = false;    // REPEATER_ON = false:  If you don't want the repeater functionality.
 var SPAM_ON = true;         // SPAMER_ON = false:  If you don't want the spammer functionality (no PoW!).
-var VALUESPAM_ON = true;    // VALUESPAM_ON = false:: If you don't want to spam with value (iota).
-var USER_SEED = "USER_SEED";   // seed that contains iota and will  be used for spamming with value.
                             // ^^^^^^^^^^^ One of the 2 options should be true, 
                             //             otherwise it aint doing nothing!
+var VALUESPAM_ON = true;    // VALUESPAM_ON = false:: If you don't want to spam with value (iota).
+
+var USER_SEED = "USER_SEED";   // seed that contains iota and will  be used for spamming with value.
 var SPAM_MESSAGE = "SPAMSPAMSPAM";    // only A-Z and 9 allowed!
 var SPAM_TAG = "YOURNAME"   // only A-Z and 9 allowed!
 var SPAM_FREQUENCY = 10     // minimum spam interval in seconds.
@@ -218,8 +219,12 @@ function spam_spam_spam() {
         }
         spam_count++;
         var ellapsed = performance()-spam_starttime;
-        spam_timesum += ellapsed; 
-        console.log("*INFO  Spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
+        spam_timesum += ellapsed;
+        if (VALUESPAM_ON == true) {
+            console.log("*INFO  Spam type: value , spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
+        } else {
+            console.log("*INFO  Spam type: message, spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
+        }
         console.log("*INFO  Average spam duration: "+Math.floor(spam_timesum/1000)/spam_count+" seconds (deliberate delays not included.)"); 
         lock_spam = false;
     });
@@ -294,14 +299,14 @@ function onMyTimer() {
     }
 }
 if(VALUESPAM_ON == true && SPAM_ON == true) {
-    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING **VALUE** SPAMMER: "+VALUESPAM_ON);
+    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING VALUE SPAMMER: "+VALUESPAM_ON);
 }
 else  {
-    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING **MESSAGE** SPAMMER: "+SPAM_ON);
+    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING MESSAGE SPAMMER: "+SPAM_ON);
 }
 
 if (SPAM_ON == true && VALUESPAM_ON == true) {
-    console.log('*INFO  Checking the supplied seed ...');
+    console.log('*INFO  Checking the seed for any balance...');
     iota.api.getInputs(USER_SEED, function(e,s) {
         if(s) {
             var inputs = s.inputs;
@@ -315,9 +320,9 @@ if (SPAM_ON == true && VALUESPAM_ON == true) {
                     'message': SPAM_MESSAGE,
                     'tag': SPAM_TAG
                 }];
-                console.log('*INFO  Value spamming with address ' + inputs[0].address + ' and value '  + inputs[0].balance+'.');
+                console.log('*INFO  Value spamming started from/to address ' + inputs[0].address + ' with '  + inputs[0].balance+' iota.');
             } else {
-                console.log('*INFO  No value found in the seed.!')
+                console.log('*INFO  No balance was found in the seed!')
                 process.exit(1);
             }
 

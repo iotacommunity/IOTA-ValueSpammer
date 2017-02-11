@@ -1,5 +1,5 @@
-# IOTA-Spammer
-An application to contribute to IOTA network efficiency by sending spam transactions.
+# IOTA-ValueSpammer
+An application to contribute to IOTA network efficiency by sending 'value or message' spam transactions.
 Optionally, it can also be used to re-broadcast transactions that the node received since the last milestone.
 
 
@@ -15,19 +15,21 @@ Now you are ready to configure and use this tool.
 ## CONFIGURATION
 You can run the application 'out of the box' with a local IRI node, or you can take a choice:
 
-1) Run repeater only, without spammer (REPEATER_ON=true|false).
+1) Run repeater only, without spammer (REPEATER_ON=true & SPAM_ON=false & VALUESPAM_ON=true|false).
 
-2) Run message spammer only, without repeater (SPAM_ON=true|false).
+2) Run 'message' spammer only, without repeater (REPEATER_ON=false & SPAM_ON=true & VALUESPAM_ON=false).
 
-3) Run value spammer only, without repeater (SPAM_ON=true  & VALUESPAM_ON=true|false).
+3) Run 'value' spammer only, without repeater (REPEATER_ON=false & SPAM_ON=true & VALUESPAM_ON=true).
 
-4) Set a user seed if you want to perform value spams (USER_SEED="USER_SEED")
+4) Run 'message or value' spammer and repeater simultanious (REPEATER_ON=true & SPAM_ON=true & VALUESPAM_ON=true|false).
 
-4) Set the spammers time interval (SPAM_FREQUENCY=90, seconds, deliberate delays between spams).
+5) Setting a user seed is mandatory if you want to perform value spamming (USER_SEED="USER_SEED")
 
-5) Set your personal spam message and tag (recommended).
+6) Set the spammers time interval (SPAM_FREQUENCY=90, seconds, deliberate delays between spams).
 
-6) Set the search depth for 'transactions to approve', default SPAM_DEPTH_MIN = 3, SPAM_DEPTH_MAX = 12
+7) Set your personal spam message and tag (recommended).
+
+8) Set the search depth for 'transactions to approve', default SPAM_DEPTH_MIN = 3, SPAM_DEPTH_MAX = 12
    The spammer will calculate a random depth between and including SPAM_DEPTH_MIN to SPAM_DEPTH_MAX for each spam.
 
 You find those parameters declarations in the top section of repeater.js.
