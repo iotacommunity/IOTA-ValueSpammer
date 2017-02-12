@@ -268,6 +268,7 @@ function onMyTimer() {
              }
              // synced is true
         });
+        enable_spam = false;
     }
 
     if (REPEATER_ON==true) {
@@ -297,46 +298,48 @@ function onMyTimer() {
             }
         }
     }
+    
+    if (iri_is_synced && enable_spam == false) {
+        if (SPAM_ON == true && VALUESPAM_ON == true) {
+            console.log('*INFO  Checking the seed for any balance...');
+            iota.api.getInputs(USER_SEED, function(e,s) {
+                if(s) {
+                    var inputs = s.inputs;
+
+                    if (inputs.length > 0) {
+                        balance_found = true;
+
+                        transfers = [{
+                            'address': inputs[0].address,
+                            'value': inputs[0].balance,
+                            'message': SPAM_MESSAGE,
+                            'tag': SPAM_TAG
+                        }];
+                        console.log('*INFO  Value spamming started from/to address ' + inputs[0].address + ' with '  + inputs[0].balance+' iota.');
+                    } else {
+                        console.log('*INFO  No balance was found in the seed!')
+                        process.exit(1);
+                    }
+
+                    enable_spam = true;
+
+                } else {
+                    console.log(e);
+                    process.exit(1);
+                }
+            });
+        } else {
+            enable_spam = true;
+        }
+    }
 }
+
 if(VALUESPAM_ON == true && SPAM_ON == true) {
     console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING VALUE SPAMMER: "+VALUESPAM_ON);
 }
 else  {
     console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING MESSAGE SPAMMER: "+SPAM_ON);
 }
-
-if (iri_is_synced && SPAM_ON == true && VALUESPAM_ON == true) {
-    console.log('*INFO  Checking the seed for any balance...');
-    iota.api.getInputs(USER_SEED, function(e,s) {
-        if(s) {
-            var inputs = s.inputs;
-
-            if (inputs.length > 0) {
-                balance_found = true;
-
-                transfers = [{
-                    'address': inputs[0].address,
-                    'value': inputs[0].balance,
-                    'message': SPAM_MESSAGE,
-                    'tag': SPAM_TAG
-                }];
-                console.log('*INFO  Value spamming started from/to address ' + inputs[0].address + ' with '  + inputs[0].balance+' iota.');
-            } else {
-                console.log('*INFO  No balance was found in the seed!')
-                process.exit(1);
-            }
-
-            enable_spam = true;
-
-        } else {
-            console.log(e);
-            process.exit(1);
-        }
-    });
-} else {
-    enable_spam = true;
-}
-
 
 onMyTimer();
 setInterval(onMyTimer, 3000);
