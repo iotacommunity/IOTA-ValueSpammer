@@ -245,8 +245,8 @@ function onMyTimer() {
              var milestone = s.latestMilestone;
              var solidMilestone = s.latestSolidSubtangleMilestone;
              current_milestone_idx = s.latestMilestoneIndex;
-             if (milestone == allnine || solidMilestone == allnine) {
-                 console.log("*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
+             if (milestone == allnine || solidMilestone == allnine || solidMilestone < milestone) {
+                 console.log("*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+solidMilestone );
                  lock = false;
                  return;
              } 
