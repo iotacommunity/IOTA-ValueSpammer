@@ -58,9 +58,9 @@ process.argv.forEach((val, index) => {
     wanted_milestone = 0;
     if (index == 2) {
         wanted_milestone = val;
-        console.log("");
-        console.log("Repeater will start when milestone "+wanted_milestone+" is reached!");
-        console.log("");
+        console.log(Date().toLocaleString() +"");
+        console.log(Date().toLocaleString() +" Repeater will start when milestone "+wanted_milestone+" is reached!");
+        console.log(Date().toLocaleString() +"");
     }
 });
 
@@ -70,11 +70,11 @@ process.stdin.resume();
 process.on('SIGINT', function () {
     iota.api.interruptAttachingToTangle(function(e,s) {
         if (e == null) {
-            console.log("*Attachting stopped");
+            console.log(Date().toLocaleString() +" *Attachting stopped");
             process.exit(1);
         } else {
-            console.log("*Attachting stopped with error");
-            console.log(e)
+            console.log(Date().toLocaleString() +" *Attachting stopped with error");
+            console.log(Date().toLocaleString() + e)
             process.exit(1);
         }
     });
@@ -92,9 +92,9 @@ function collect_tips_at_startup() {
         }
         iota.api.getTips(function(e,s) {
             if (e != null) {
-                console.log("*ERROR:  cannot get tips at startup");
-                console.log(" iota.lib.js returns this error:");
-                console.log(e);
+                console.log(Date().toLocaleString() +" *ERROR:  cannot get tips at startup");
+                console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+                console.log(Date().toLocaleString() + e);
                 process.exit(1);
             }
             var tips = s['hashes'];
@@ -112,9 +112,9 @@ function collect_fresh_arrived() {
     // collect the new tips since startup or the last milestone 
     iota.api.getTips(function(e,s) {
         if (e != null) {
-            console.log("*ERROR:  cannot get tips");
-            console.log(" iota.lib.js returns this error:");
-            console.log(e);
+            console.log(Date().toLocaleString() +" *ERROR:  cannot get tips");
+            console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+            console.log(Date().toLocaleString() + e);
             process.exit(1);
         }
         var tips = s['hashes'];
@@ -146,20 +146,20 @@ function collect_fresh_arrived() {
 
 function broadcast_fresh_arrived() {
     if (new_tips.length > 0) {
-        console.log("*INFO  --- Milestone has changed, rebroadcasting the "+new_tips.length+" most recent txs");
+        console.log(Date().toLocaleString() +" *INFO  --- Milestone has changed, rebroadcasting the "+new_tips.length+" most recent txs");
         iota.api.getTrytes(new_tips, function(e,s) {
             if (e != null) {
-                console.log("*ERROR  cannot get trytes");
-                console.log(" iota.lib.js returns this error:");
-                console.log(e);
+                console.log(Date().toLocaleString() +" *ERROR  cannot get trytes");
+                console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+                console.log(Date().toLocaleString() + e);
                 process.exit(1);
             }
             var trytes = s['trytes'];
             iota.api.broadcastTransactions(trytes, function(e,s) {
                 if (e != null) {
-                    console.log("*ERROR  cannot broadcast");
-                    console.log(" iota.lib.js returns this error:");
-                    console.log(e);
+                    console.log(Date().toLocaleString() +" *ERROR  cannot broadcast");
+                    console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+                    console.log(Date().toLocaleString() + e);
                     process.exit(1);
                 }
                 new_tips = [];
@@ -175,20 +175,20 @@ function broadcast_fresh_arrived() {
 
 function broadcast_intermediate() {
     if (new_tips_step.length > 0) {
-        console.log("*INFO  --- rebroadcasting the "+new_tips_step.length+" most recent txs (intermediate step)");
+        console.log(Date().toLocaleString() +" *INFO  --- rebroadcasting the "+new_tips_step.length+" most recent txs (intermediate step)");
         iota.api.getTrytes(new_tips_step, function(e,s) {
             if (e != null) {
-                console.log("*ERROR  cannot get trytes");
-                console.log(" iota.lib.js returns this error:");
-                console.log(e);
+                console.log(Date().toLocaleString() +" *ERROR  cannot get trytes");
+                console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+               console.log(Date().toLocaleString() + e);
                 process.exit(1);
             }
             var trytes = s['trytes'];
             iota.api.broadcastTransactions(trytes, function(e,s) {
                 if (e != null) {
-                    console.log("*ERROR  cannot broadcast");
-                    console.log(" iota.lib.js returns this error:");
-                    console.log(e);
+                    console.log(Date().toLocaleString() +" *ERROR  cannot broadcast");
+                    console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+                    console.log(Date().toLocaleString() + e);
                     process.exit(1);
                 }
                 new_tips_step = [];
@@ -212,20 +212,20 @@ function spam_spam_spam() {
     var depth = Math.floor(Math.random()*(SPAM_DEPTH_MAX-SPAM_DEPTH_MIN+1)+SPAM_DEPTH_MIN);
     iota.api.sendTransfer(seed,depth,weight,transfers,function(e,s) {
         if (e != null) {
-            console.log("*ERROR  sendTransfer() failed");
-            console.log(" iota.lib.js returns this error:");
-            console.log(e);
+            console.log(Date().toLocaleString() +" *ERROR  sendTransfer() failed");
+            console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
+            console.log(Date().toLocaleString() + e);
             process.exit(1);
         }
         spam_count++;
         var ellapsed = performance()-spam_starttime;
         spam_timesum += ellapsed;
         if (VALUESPAM_ON == true) {
-            console.log("*INFO  Spam type: value , spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
+            console.log(Date().toLocaleString() +" *INFO  Spam type: value , spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
         } else {
-            console.log("*INFO  Spam type: message, spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
+            console.log(Date().toLocaleString() +" *INFO  Spam type: message, spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
         }
-        console.log("*INFO  Average spam duration: "+Math.floor(spam_timesum/1000)/spam_count+" seconds (deliberate delays not included.)"); 
+        console.log(Date().toLocaleString() +" *INFO  Average spam duration: "+Math.floor(spam_timesum/1000)/spam_count+" seconds (deliberate delays not included.)"); 
         lock_spam = false;
     });
 }
@@ -238,31 +238,31 @@ function onMyTimer() {
     if (!iri_is_synced) {
         iota.api.getNodeInfo(function(e,s) {
              if (e) {
-                 console.log("*INFO  Waiting for iri connection.");
+                 console.log(Date().toLocaleString() +" *INFO  Waiting for iri connection.");
                  lock = false;
                  return;
              }
              var milestone = s.latestMilestone;
-             var solidMilestone = s.latestSolidSubtangleMilestone;
+             var solidMilestone = s.latestSolidSubtangleMilestoneIndex;
              current_milestone_idx = s.latestMilestoneIndex;
              if (milestone == allnine || solidMilestone == allnine || solidMilestone < milestone) {
-                 console.log("*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+solidMilestone );
+                 console.log(Date().toLocaleString() +" *INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+solidMilestone );
                  lock = false;
                  return;
              } 
              else {
                  if (wanted_milestone > 0) {
-                     console.log("wanted milestone is "+wanted_milestone);
+                     console.log(Date().toLocaleString() +" wanted milestone is "+wanted_milestone);
                      if (s.latestSolidSubtangleMilestoneIndex < wanted_milestone) {
-                         console.log("*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
+                         console.log(Date().toLocaleString() +" *INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
                      }
                      else {
-                         console.log("*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
+                         console.log(Date().toLocaleString() +" *INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
                      }
                      lock = false;
                  }
                  else { 
-                     console.log("*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
+                     console.log(Date().toLocaleString() +" *INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
                      lock = false;
                  }
              }
@@ -301,7 +301,7 @@ function onMyTimer() {
     
     if (iri_is_synced && enable_spam == false) {
         if (SPAM_ON == true && VALUESPAM_ON == true) {
-            console.log('*INFO  Checking the seed for any balance...');
+            console.log(Date().toLocaleString() +' *INFO  Checking the seed for any balance...');
             iota.api.getInputs(USER_SEED, function(e,s) {
                 if(s) {
                     var inputs = s.inputs;
@@ -315,16 +315,16 @@ function onMyTimer() {
                             'message': SPAM_MESSAGE,
                             'tag': SPAM_TAG
                         }];
-                        console.log('*INFO  Value spamming started from/to address ' + inputs[0].address + ' with '  + inputs[0].balance+' iota.');
+                        console.log(Date().toLocaleString() +' *INFO  Value spamming started from/to address ' + inputs[0].address + ' with '  + inputs[0].balance+' iota.');
                     } else {
-                        console.log('*INFO  No balance was found in the seed!')
+                        console.log(Date().toLocaleString() +' *INFO  No balance was found in the seed!')
                         process.exit(1);
                     }
 
                     enable_spam = true;
 
                 } else {
-                    console.log(e);
+                    console.log(Date().toLocaleString() + e);
                     process.exit(1);
                 }
             });
@@ -335,10 +335,10 @@ function onMyTimer() {
 }
 
 if(VALUESPAM_ON == true && SPAM_ON == true) {
-    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING VALUE SPAMMER: "+VALUESPAM_ON);
+    console.log(Date().toLocaleString() +" RUNNING REPEATER: "+REPEATER_ON+", RUNNING VALUE SPAMMER: "+VALUESPAM_ON);
 }
 else  {
-    console.log("RUNNING REPEATER: "+REPEATER_ON+", RUNNING MESSAGE SPAMMER: "+SPAM_ON);
+    console.log(Date().toLocaleString() + "RUNNING REPEATER: "+REPEATER_ON+", RUNNING MESSAGE SPAMMER: "+SPAM_ON);
 }
 
 onMyTimer();
