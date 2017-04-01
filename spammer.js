@@ -9,7 +9,7 @@ var REPEATER_ON = false;    // REPEATER_ON = false:  If you don't want the repea
 var SPAM_ON = true;         // SPAMER_ON = false:  If you don't want the spammer functionality (no PoW!).
                             // ^^^^^^^^^^^ One of the 2 options should be true, 
                             //             otherwise it aint doing nothing!
-var VALUESPAM_ON = true;    // VALUESPAM_ON = false:: If you don't want to spam with value (iota).
+var VALUESPAM_ON = false;   // VALUESPAM_ON = false:: If you don't want to spam with value (iota).
 
 var USER_SEED = "USER_SEED";   // seed that contains iota and will  be used for spamming with value.
 var SPAM_MESSAGE = "SPAMSPAMSPAM";    // only A-Z and 9 allowed!
@@ -17,8 +17,11 @@ var SPAM_TAG = "YOURNAME"   // only A-Z and 9 allowed!
 var SPAM_FREQUENCY = 10     // minimum spam interval in seconds.
 var SPAM_DEPTH_MIN = 3      // How deep to search for transactions to approve (minimum)
 var SPAM_DEPTH_MAX = 12     // How deep to search for transactions to approve (maximum)
-var IRI_PORT       = 14265  // Must match your port configuration for iri process
-var TESTNET = true;        // Set to true only if you are using testnet.
+var IRI_PORT       = 14700  // Must match your port configuration for iri process
+var TESTNET = true;         // Set to true only if you are using testnet.
+
+var TIMER_INTERVAL = 900    // The msec interval between spammer wake-up
+
 // -------- end of configrable part ------
 
 // -------- javascript code --------------
@@ -230,46 +233,48 @@ function spam_spam_spam() {
     });
 }
 
-
 function onMyTimer() {
     if (lock) return;
     lock = true;
     // First, check if synced 
-    if (!iri_is_synced) {
         iota.api.getNodeInfo(function(e,s) {
-             if (e) {
-                 console.log(Date().toLocaleString() +" *INFO  Waiting for iri connection.");
-                 lock = false;
-                 return;
-             }
-             var milestone = s.latestMilestone;
-             var solidMilestone = s.latestSolidSubtangleMilestoneIndex;
-             current_milestone_idx = s.latestMilestoneIndex;
-             if (milestone == allnine || solidMilestone == allnine || solidMilestone < milestone) {
-                 console.log(Date().toLocaleString() +" *INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+solidMilestone );
-                 lock = false;
-                 return;
-             } 
-             else {
-                 if (wanted_milestone > 0) {
-                     console.log(Date().toLocaleString() +" wanted milestone is "+wanted_milestone);
-                     if (s.latestSolidSubtangleMilestoneIndex < wanted_milestone) {
-                         console.log(Date().toLocaleString() +" *INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
-                     }
-                     else {
-                         console.log(Date().toLocaleString() +" *INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
-                     }
-                     lock = false;
-                 }
-                 else { 
-                     console.log(Date().toLocaleString() +" *INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); iri_is_synced = true;
-                     lock = false;
-                 }
-             }
+            if (e) {
+                console.log(Date().toLocaleString() +" *INFO  Waiting for iri connection.");
+                lock = false;
+                return;
+            }
+            var milestone = s.latestMilestone;
+            var solidMilestone = s.latestSolidSubtangleMilestone;
+            current_milestone_idx = s.latestMilestoneIndex;
+            if (milestone == allnine || solidMilestone == allnine  || s.latestSolidSubtangleMilestoneIndex < s.latestMilestoneIndex ) {
+                console.log(Date().toLocaleString() +"*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex);
+                iri_is_synced = false;
+                lock = false;
+                return;
+            } 
+            else {
+                if (wanted_milestone > 0) {
+                    console.log(Date().toLocaleString() +"wanted milestone is "+wanted_milestone);
+                    if (s.latestSolidSubtangleMilestoneIndex < wanted_milestone) {
+                        console.log(Date().toLocaleString() +"*INFO  Waiting for synchronization with network. Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
+                        iri_is_synced = false;
+                    }
+                    else {
+                        console.log("Date().toLocaleString() +*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); 
+                        iri_is_synced = true;
+                    }
+                    lock = false;
+                }
+                else { 
+                    console.log(Date().toLocaleString() +"*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); 
+                    iri_is_synced = true;
+                    lock = false;
+                }
+            }
              // synced is true
         });
-        enable_spam = false;
-    }
+    //enable_spam = false;
+    
 
     if (REPEATER_ON==true) {
         if (ignore_tips == null) {
@@ -342,5 +347,5 @@ else  {
 }
 
 onMyTimer();
-setInterval(onMyTimer, 3000);
+setInterval(onMyTimer, TIMER_INTERVAL);
 
