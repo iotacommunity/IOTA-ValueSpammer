@@ -46,8 +46,8 @@ var enable_spam   = false;
 var balance_found = false;
 
 var iota = new IOTA({
-    'host': 'http://m10.iotaledger.net',
-    'port': 15265
+    'host': 'http://localhost',
+    'port': IRI_PORT
 });
 
 var transfers = [{
