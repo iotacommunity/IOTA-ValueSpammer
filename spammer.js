@@ -46,8 +46,8 @@ var enable_spam   = false;
 var balance_found = false;
 
 var iota = new IOTA({
-    'host': 'http://localhost',
-    'port': IRI_PORT
+    'host': 'http://m10.iotaledger.net',
+    'port': 15265
 });
 
 var transfers = [{
@@ -213,7 +213,7 @@ function spam_spam_spam() {
     var weight = 18
     if (TESTNET==true) weight = 13;
     var depth = Math.floor(Math.random()*(SPAM_DEPTH_MAX-SPAM_DEPTH_MIN+1)+SPAM_DEPTH_MIN);
-    iota.api.sendTransfer(seed,depth,weight,transfers,function(e,s) {
+    iota.api.sendTransfer(seed, depth, weight, transfers, function(e,s) {
         if (e != null) {
             console.log(Date().toLocaleString() +" *ERROR  sendTransfer() failed");
             console.log(Date().toLocaleString() +" iota.lib.js returns this error:");
@@ -238,6 +238,7 @@ function onMyTimer() {
     lock = true;
     // First, check if synced
         iota.api.getNodeInfo(function(e,s) {
+
             if (e) {
                 console.log(Date().toLocaleString() +" *INFO  Waiting for iri connection.");
                 lock = false;
