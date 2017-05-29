@@ -1,13 +1,13 @@
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var performance = require("performance-now");
-var IOTA = require("iota.lib.js");
+var IOTA = require("./lib/iota");
 
 // ---------------------------------------
 // Configure your spammer properties here:
 // ---------------------------------------
 var REPEATER_ON = false;    // REPEATER_ON = false:  If you don't want the repeater functionality.
 var SPAM_ON = true;         // SPAMER_ON = false:  If you don't want the spammer functionality (no PoW!).
-                            // ^^^^^^^^^^^ One of the 2 options should be true, 
+                            // ^^^^^^^^^^^ One of the 2 options should be true,
                             //             otherwise it aint doing nothing!
 var VALUESPAM_ON = false;   // VALUESPAM_ON = false:: If you don't want to spam with value (iota).
 
@@ -29,7 +29,7 @@ var TIMER_INTERVAL = 900    // The msec interval between spammer wake-up
 var allnine = '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
 var ignore_tips = null;
 var new_tips = [];
-var new_tips_step = [] 
+var new_tips_step = []
 var previous_milestone_idx = 0;
 var current_milestone_idx = 0;
 var lock = false;
@@ -47,7 +47,7 @@ var balance_found = false;
 
 var iota = new IOTA({
     'host': 'http://localhost',
-    'port': IRI_PORT 
+    'port': IRI_PORT
 });
 
 var transfers = [{
@@ -112,7 +112,7 @@ function collect_tips_at_startup() {
 }
 
 function collect_fresh_arrived() {
-    // collect the new tips since startup or the last milestone 
+    // collect the new tips since startup or the last milestone
     iota.api.getTips(function(e,s) {
         if (e != null) {
             console.log(Date().toLocaleString() +" *ERROR:  cannot get tips");
@@ -137,7 +137,7 @@ function collect_fresh_arrived() {
         }
         else {
             if (new_tips_step.length > 9) {
-                broadcast_intermediate(); 
+                broadcast_intermediate();
             }
             else {
                 lock = false
@@ -228,7 +228,7 @@ function spam_spam_spam() {
         } else {
             console.log(Date().toLocaleString() +" *INFO  Spam type: message, spam count: "+spam_count+", last spam took "+Math.floor(ellapsed/1000)+" seconds, search depth was "+depth);
         }
-        console.log(Date().toLocaleString() +" *INFO  Average spam duration: "+Math.floor(spam_timesum/1000)/spam_count+" seconds (deliberate delays not included.)"); 
+        console.log(Date().toLocaleString() +" *INFO  Average spam duration: "+Math.floor(spam_timesum/1000)/spam_count+" seconds (deliberate delays not included.)");
         lock_spam = false;
     });
 }
@@ -236,7 +236,7 @@ function spam_spam_spam() {
 function onMyTimer() {
     if (lock) return;
     lock = true;
-    // First, check if synced 
+    // First, check if synced
         iota.api.getNodeInfo(function(e,s) {
             if (e) {
                 console.log(Date().toLocaleString() +" *INFO  Waiting for iri connection.");
@@ -251,7 +251,7 @@ function onMyTimer() {
                 iri_is_synced = false;
                 lock = false;
                 return;
-            } 
+            }
             else {
                 if (wanted_milestone > 0) {
                     console.log(Date().toLocaleString() +"wanted milestone is "+wanted_milestone);
@@ -260,13 +260,13 @@ function onMyTimer() {
                         iri_is_synced = false;
                     }
                     else {
-                        console.log("Date().toLocaleString() +*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); 
+                        console.log("Date().toLocaleString() +*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
                         iri_is_synced = true;
                     }
                     lock = false;
                 }
-                else { 
-                    console.log(Date().toLocaleString() +"*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex ); 
+                else {
+                    console.log(Date().toLocaleString() +"*INFO  Synchronized! Latest milestone idx: "+current_milestone_idx+". Latest solid milestone idx: "+s.latestSolidSubtangleMilestoneIndex );
                     iri_is_synced = true;
                     lock = false;
                 }
@@ -274,7 +274,7 @@ function onMyTimer() {
              // synced is true
         });
     //enable_spam = false;
-    
+
 
     if (REPEATER_ON==true) {
         if (ignore_tips == null) {
@@ -303,7 +303,7 @@ function onMyTimer() {
             }
         }
     }
-    
+
     if (iri_is_synced && enable_spam == false) {
         if (SPAM_ON == true && VALUESPAM_ON == true) {
             console.log(Date().toLocaleString() +' *INFO  Checking the seed for any balance...');
@@ -348,4 +348,3 @@ else  {
 
 onMyTimer();
 setInterval(onMyTimer, TIMER_INTERVAL);
-
