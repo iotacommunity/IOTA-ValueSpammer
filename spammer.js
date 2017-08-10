@@ -13,12 +13,12 @@ var VALUESPAM_ON = false;   // VALUESPAM_ON = false:: If you don't want to spam 
 
 var USER_SEED = "USER_SEED";   // seed that contains iota and will  be used for spamming with value.
 var SPAM_MESSAGE = "SPAMSPAMSPAM";    // only A-Z and 9 allowed!
-var SPAM_TAG = "YOURNAME"   // only A-Z and 9 allowed!
+var SPAM_TAG = "YOURTAG"   // only A-Z and 9 allowed!
 var SPAM_FREQUENCY = 10     // minimum spam interval in seconds.
 var SPAM_DEPTH_MIN = 3      // How deep to search for transactions to approve (minimum)
 var SPAM_DEPTH_MAX = 12     // How deep to search for transactions to approve (maximum)
-var IRI_PORT       = 14700  // Must match your port configuration for iri process
-var TESTNET = true;         // Set to true only if you are using testnet.
+var IRI_PORT       = 14600  // Must match your port configuration for iri process
+var TESTNET = false;         // Set to true only if you are using testnet.
 
 var TIMER_INTERVAL = 900    // The msec interval between spammer wake-up
 
@@ -210,8 +210,8 @@ function spam_spam_spam() {
     // Change the seed if value spamming is enabled and balance has been found.
     if(VALUESPAM_ON == true && balance_found == true) seed = USER_SEED;
 
-    var weight = 18
-    if (TESTNET==true) weight = 13;
+    var weight = 15;
+    if (TESTNET==true) weight = 9;
     var depth = Math.floor(Math.random()*(SPAM_DEPTH_MAX-SPAM_DEPTH_MIN+1)+SPAM_DEPTH_MIN);
     iota.api.sendTransfer(seed,depth,weight,transfers,function(e,s) {
         if (e != null) {
