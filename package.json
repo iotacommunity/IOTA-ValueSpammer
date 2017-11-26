@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/iotacommunity/IOTA-Spammer#readme",
   "dependencies": {
-    "iota.lib.js": "0.4.2",
+    "iota.lib.js": "0.4.3",
     "performance-now": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   }
